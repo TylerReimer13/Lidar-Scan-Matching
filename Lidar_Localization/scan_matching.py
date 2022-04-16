@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.neighbors import NearestNeighbors
 
 
 class ICP:
@@ -40,23 +41,12 @@ class ICP:
 
         return ds1, ds2_rot
 
-    def nearest_neighbor(self, pc1, pc2):
-        idxs = []
-        for pt1 in pc1:
-            nearest = 9E99
-            nearest_idx = None
-            pt2_idx = 0
-            for pt2 in pc2:
-                dist = np.linalg.norm(pt1 - pt2)
-                if dist < nearest:
-                    nearest = dist
-                    nearest_idx = pt2_idx
+        def nearest_neighbors(self, pc1, pc2):
+            neigh = NearestNeighbors(n_neighbors=1)
+            neigh.fit(pc2)
+            distances, indices = neigh.kneighbors(pc1, return_distance=True)
 
-                pt2_idx += 1
-
-            idxs.append(nearest_idx)
-
-        return idxs
+        return indices.ravel()
 
     def centroid(self, pts):
         length = pts.shape[0]
@@ -99,7 +89,7 @@ class ICP:
         B = pc2.copy()
 
         for i in range(n_iter):
-            neighbors = self.nearest_neighbor(A, B)
+            neighbors = self.nearest_neighbors(A, B)
             T = self.transformation(A, B[neighbors])  # T = self.transformation(pc1, targets)
             A = self.transform_pc(A, T)
 
