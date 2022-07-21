@@ -41,10 +41,10 @@ class ICP:
 
         return ds1, ds2_rot
 
-        def nearest_neighbors(self, pc1, pc2):
-            neigh = NearestNeighbors(n_neighbors=1)
-            neigh.fit(pc2)
-            distances, indices = neigh.kneighbors(pc1, return_distance=True)
+    def nearest_neighbors(self, pc1, pc2):
+        neigh = NearestNeighbors(n_neighbors=1)
+        neigh.fit(pc2)
+        distances, indices = neigh.kneighbors(pc1, return_distance=True)
 
         return indices.ravel()
 
